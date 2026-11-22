@@ -7,7 +7,7 @@ one order dataset.
 | | |
 |---|---|
 | **Live demo** | https://logistics-ai-analytics.agung.click (also https://logistics-ai-analytics.vercel.app) |
-| **Video walkthrough (Loom)** | _Add the Loom link here_ |
+| **Video walkthrough (Loom)** | https://www.loom.com/share/38f204c27ccc4766b451786394816807 |
 | **Source** | this repository |
 | **Sign-in** | `admin@demo.com` · `analyst@demo.com` · `viewer@demo.com`, password `demo1234` |
 
@@ -517,6 +517,11 @@ They can be read independently: the core logic is `modules/analytics`,
 - When a request is vague, the assistant asks for clarification only if it
   cannot proceed. Otherwise it chooses a sensible reading.
 - Conversation context is the last six messages.
+- Staying on scope relies on the model's judgment. In final testing, a request
+  to reveal the prompt, sent inside a conversation that already had analytics
+  answers, was three times out of four answered with fresh data for the earlier
+  question rather than declined. It disclosed nothing, but it is not the
+  refusal the app gives in a new conversation.
 
 **Deployment**
 
@@ -528,7 +533,10 @@ They can be read independently: the core logic is `modules/analytics`,
 - Operational data is read-only through the API. Seeding is an administrative
   script.
 - The model never receives a database connection and cannot request raw SQL.
-- A request to reveal the prompt or keys is refused; this was tested.
+- A request to reveal the prompt or keys never returns them. In a new
+  conversation it receives a fixed refusal. Inside an existing conversation the
+  assistant sometimes re-answers the previous question instead of declining.
+  That inconsistency was found in final testing and is not fixed yet.
 - Passwords are hashed with bcrypt. Invite tokens expire after seven days.
 - Secrets exist only in `.env`, which is excluded from both Git and the Docker
   build.
