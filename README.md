@@ -53,7 +53,7 @@ message.
 
 ### Option 2 — Local
 
-Requires Node 20 or later and a PostgreSQL database.
+Requires Node 24 and a PostgreSQL database.
 
 ```bash
 npm install
@@ -542,6 +542,9 @@ The application runs on Vercel and the database on Neon.
 1. Create the Vercel project from the repository with `vercel link`. Do not
    import the repository in the Vercel dashboard: importing makes Vercel build
    and deploy again on every push, which would duplicate the pipeline below.
+   Check the project afterwards: its framework must be **Next.js** and its Node
+   version **24.x**. A project created with `vercel project add` has no
+   framework and then fails the build with `STATIC_BUILD_NO_OUT_DIR`.
 2. Add the application variables from the table above to the Vercel project.
 3. Once, against the production database: `npm run db:push && npm run db:seed`.
 4. Choose a Vercel region close to the database.

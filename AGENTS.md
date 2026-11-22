@@ -225,6 +225,13 @@ themselves, or remove `manageUsers` from the role they hold.
   enough when nothing connects.
 - **LLMs stringify nested objects.** GLM sent `dateRange` as a JSON string, so
   the schemas preprocess stringified objects before validating.
+- **A Vercel project made with `vercel project add` has no framework.** Vercel
+  then treats it as a static site and the build fails with
+  `STATIC_BUILD_NO_OUT_DIR`. Set the framework to `nextjs` (and Node to `24.x`)
+  on the project before the first deploy.
+- **Node is pinned to `24.x`** in `package.json`, the CI workflow and the
+  Dockerfile, and on the Vercel project. Change all four together; a Vercel
+  project created without a Node setting defaults to a newer, untested major.
 - **zsh expands `?` in unquoted URLs.** Quote `"$BASE/api/users?id=$ID"`.
 - **Prisma `distinct` takes an array** (`distinct: ["sku"]`), not an object.
 - **History messages need `toolCalls: []`** on assistant turns or the Anthropic
