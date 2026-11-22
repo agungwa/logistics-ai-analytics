@@ -38,3 +38,4 @@ next-env.d.ts
 
 # local AI coding-agent settings
 .claude
+.env*

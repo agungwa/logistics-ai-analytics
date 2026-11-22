@@ -1,5 +1,9 @@
 generator client {
   provider = "prisma-client-js"
+  // The CI pipeline builds on Ubuntu and uploads a prebuilt bundle to Vercel,
+  // whose Node runtime identifies as rhel-openssl-3.0.x. Ship that engine too,
+  // or the deployed app fails at runtime with "Query Engine not found".
+  binaryTargets = ["native", "rhel-openssl-3.0.x", "debian-openssl-3.0.x"]
 }
 
 datasource db {
