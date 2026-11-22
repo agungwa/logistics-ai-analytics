@@ -1,0 +1,11 @@
+node_modules
+.next
+.git
+.env
+.env.local
+external-docs
+*.log
+Dockerfile
+docker-compose.yml
+.claude
+.DS_Store

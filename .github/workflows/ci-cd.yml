@@ -1,0 +1,77 @@
+# Continuous integration and delivery.
+#
+#   ci     on every push and pull request: typecheck, unit tests, production build
+#   deploy only after ci has succeeded on main: build once and upload that exact
+#          build to Vercel as a production deployment
+#
+# Required repository secrets (Settings → Secrets and variables → Actions):
+#   VERCEL_TOKEN       Vercel access token (Account Settings → Tokens)
+#   VERCEL_ORG_ID      Team/Org ID   (Vercel project → Settings → General)
+#   VERCEL_PROJECT_ID  Project ID    (same page)
+#
+# The application's own variables (DATABASE_URL, AUTH_SECRET, AI_*) are NOT
+# stored here. They live in the Vercel project settings: `vercel pull` fetches
+# them for the build and Vercel injects them at run time.
+name: CI/CD
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+# Queue runs instead of cancelling one mid-deployment.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    name: Typecheck · unit tests · build
+    runs-on: ubuntu-latest
+    env:
+      # Prisma requires a value to generate its client at install time. Nothing
+      # connects to a database during typecheck, tests or build.
+      DATABASE_URL: postgresql://ci:ci@127.0.0.1:5432/ci
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+
+  deploy:
+    name: Deploy to Vercel (production)
+    needs: ci
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      # Scoped to this step so the placeholder cannot shadow the real value
+      # that `vercel pull` downloads next.
+      - run: npm ci
+        env:
+          DATABASE_URL: postgresql://ci:ci@127.0.0.1:5432/ci
+      - name: Link to the Vercel project and download its environment
+        run: npx --yes vercel@66 pull --yes --environment=production --token="$VERCEL_TOKEN"
+      - name: Build the production bundle
+        run: npx --yes vercel@66 build --prod --token="$VERCEL_TOKEN"
+      - name: Upload the build that was just tested
+        run: npx --yes vercel@66 deploy --prebuilt --prod --token="$VERCEL_TOKEN"
