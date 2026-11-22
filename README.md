@@ -439,7 +439,7 @@ and both themes.
 
 | Decision | Alternative considered | Why this one |
 |---|---|---|
-| One Next.js app with separated modules | A separate API service | One deployable unit and less to operate. The separation that matters — interpretation, computation, business logic — is enforced by directory and by types. |
+| One deployable Next.js app — a modular monolith | A separate API service, or microservices | One product, one dataset, one team's worth of logic: a single deploy and a single thing to monitor. Microservices would add network calls, deployment and monitoring for no gain at this size. What matters is kept separate inside — AI interpretation, computation and business logic are distinct modules with typed contracts — so that extracting a service later is a contained change. I would split when a part needs independent scaling or a second team owns it. |
 | One flat `orders` table | A normalized star schema | 400 rows and 17 columns. Normalization would add joins and code with no benefit. |
 | Aggregation in SQL | Loading rows and computing in memory | SQL aggregation is the part that scales to a large dataset without changing the calling code. KPI arithmetic is kept in small pure functions so it can be unit-tested without a database. |
 | Status as the on-time measure | Inventing a promised date | The data has no SLA. A disclosed proxy is more honest than a fabricated field. |
