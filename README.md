@@ -6,7 +6,7 @@ one order dataset.
 
 | | |
 |---|---|
-| **Live demo** | _Add the deployed URL here after the first deploy_ |
+| **Live demo** | https://logistics-ai-analytics.agung.click (also https://logistics-ai-analytics.vercel.app) |
 | **Video walkthrough (Loom)** | _Add the Loom link here_ |
 | **Source** | this repository |
 | **Sign-in** | `admin@demo.com` · `analyst@demo.com` · `viewer@demo.com`, password `demo1234` |
@@ -535,7 +535,8 @@ They can be read independently: the core logic is `modules/analytics`,
 
 ## Deployment
 
-**Deployed at:** _Add the URL after the first deploy._
+**Deployed at:** https://logistics-ai-analytics.agung.click
+(also https://logistics-ai-analytics.vercel.app)
 
 The application runs on Vercel and the database on Neon.
 
